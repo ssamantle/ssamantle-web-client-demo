@@ -1,4 +1,11 @@
 import { gamesApi } from "../api/client";
+import { isMockApiEnabled } from "../config/runtime";
+import {
+  fetchMockGameState,
+  fetchMockGuessHistory,
+  joinMockGame,
+  submitMockGuess,
+} from "../mocks/mockApi";
 import type {
   AuthState,
   GameState,
@@ -67,6 +74,10 @@ function toPlayerSubmission(value: unknown): PlayerSubmission | null {
 }
 
 export async function fetchGameState(): Promise<GameState> {
+  if (isMockApiEnabled) {
+    return fetchMockGameState();
+  }
+
   const data = await gamesApi.gamePollingApiV1GamesPollingGet();
 
   return {
@@ -88,6 +99,10 @@ export async function joinGame(name: string): Promise<AuthState> {
   const usernameValidation = validateUsername(name);
   if (!usernameValidation.isValid) {
     throw new Error(usernameValidation.error ?? "사용자명을 확인해 주세요.");
+  }
+
+  if (isMockApiEnabled) {
+    return joinMockGame(usernameValidation.value);
   }
 
   try {
@@ -117,6 +132,10 @@ export async function submitGuess(
     throw new Error(guessValidation.error ?? "추측한 단어를 확인해 주세요.");
   }
 
+  if (isMockApiEnabled) {
+    return submitMockGuess(sessionId, username, guessValidation.value);
+  }
+
   const response = await gamesApi.guessWordApiV1GamesGuessPost(sessionId, {
     username: normalizeInput(username, { collapseWhitespace: true }),
     word: guessValidation.value,
@@ -135,6 +154,10 @@ export async function fetchGuessHistory(
   sessionId: string,
   username: string,
 ): Promise<GuessResult[]> {
+  if (isMockApiEnabled) {
+    return fetchMockGuessHistory(sessionId, username);
+  }
+
   const response = await gamesApi.getGuessHistoryApiV1GamesGuessesGet(
     username,
     sessionId,

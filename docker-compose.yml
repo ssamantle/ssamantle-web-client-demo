@@ -5,6 +5,10 @@ services:
     build:
       context: .
       args:
-        API_BASE_URL: ${API_BASE_URL:?API_BASE_URL is required}
+        PUBLIC_URL: ${PUBLIC_URL:-.}
+        API_BASE_URL: ${API_BASE_URL:-}
+        USE_MOCK_API: ${USE_MOCK_API:-false}
     ports:
       - "80:80"
+    environment:
+      APP_BASE_PATH: ${APP_BASE_PATH:-}

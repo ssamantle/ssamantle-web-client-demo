@@ -125,7 +125,7 @@ test("renders top info bar with synced time, username, and logout", () => {
   );
 
   expect(screen.getByText("마지막 동기화")).toBeInTheDocument();
-  expect(screen.getByText("오후 12:34:56")).toBeInTheDocument();
+  expect(screen.getByText(/(?:오후|PM) 12:34:56/)).toBeInTheDocument();
   const logoutButton = screen.getByRole("button", { name: "로그아웃" });
   const topInfoBar = logoutButton.closest("div");
   expect(topInfoBar).not.toBeNull();

@@ -1,6 +1,8 @@
 import { AuthApi, Configuration, GamesV1Api } from "@ssamantle/sdk-typescript";
+import { apiBaseUrl, isMockApiEnabled } from "../config/runtime";
 
-const missingApiBaseUrlError = "REACT_APP_API_BASE_URL is required";
+const missingApiBaseUrlError =
+  "REACT_APP_API_BASE_URL is required unless REACT_APP_USE_MOCK_API=true";
 
 function createMissingApiClient<T extends object>(): T {
   return new Proxy(
@@ -16,7 +18,9 @@ function createMissingApiClient<T extends object>(): T {
 function createApiClient<T extends object>(
   factory: (config: Configuration) => T,
 ): T {
-  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+  if (!apiBaseUrl && !isMockApiEnabled) {
+    return createMissingApiClient<T>();
+  }
 
   if (!apiBaseUrl) {
     return createMissingApiClient<T>();

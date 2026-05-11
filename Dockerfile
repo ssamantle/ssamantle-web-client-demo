@@ -14,16 +14,20 @@ COPY public ./public
 COPY src ./src
 COPY tailwind.config.js tsconfig.json ./
 
+ARG PUBLIC_URL=.
 ARG API_BASE_URL
+ARG USE_MOCK_API=false
+ENV PUBLIC_URL=${PUBLIC_URL}
 ENV REACT_APP_API_BASE_URL=${API_BASE_URL}
+ENV REACT_APP_USE_MOCK_API=${USE_MOCK_API}
 
-RUN test -n "$REACT_APP_API_BASE_URL"
+RUN if [ "$REACT_APP_USE_MOCK_API" != "true" ]; then test -n "$REACT_APP_API_BASE_URL"; fi
 RUN npm run build
 
 
 FROM nginx:1.27-alpine AS runtime
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 COPY --from=build /app/build /usr/share/nginx/html
 
 EXPOSE 80
