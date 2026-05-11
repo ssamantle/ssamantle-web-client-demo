@@ -35,6 +35,8 @@ jobs:
         run: npm ci
 
       - name: Build static site
+        env:
+          REACT_APP_USE_MOCK_API: "true"
         run: BUILD_PATH=dist npm run build
 
       - name: Upload Pages artifact
