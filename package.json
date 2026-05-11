@@ -2,6 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "ssamantle-web-client-demo/",
   "dependencies": {
     "@ssamantle/sdk-typescript": "github:ssamantle/ssamantle-sdk-typescript",
     "@testing-library/dom": "^10.4.1",
